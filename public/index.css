@@ -1,0 +1,24 @@
+html {
+  box-sizing: border-box;
+}
+*,
+*:before,
+*:after {
+  box-sizing: inherit;
+}
+body {
+  font-family: 'Source Sans Pro', sans-serif;
+}
+input[type=text] {
+  border: 1px solid #eee;
+  border-radius: 2px;
+  paddding: 0.5em;
+}
+.node {
+  stroke: #fff;
+  stroke-width: 1.5px;
+}
+.link {
+  stroke: #999;
+  stroke-opacity: 0.6;
+}

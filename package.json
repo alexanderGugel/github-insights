@@ -1,0 +1,23 @@
+{
+  "name": "github-insights",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "watch": "watchify -v -d public/index.js -o public/bundle.js & stylus -w public/index.styl & nodemon server.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "browserify": "^8.1.1",
+    "st": "^0.5.2",
+    "stylus": "^0.49.3",
+    "watchify": "^2.2.1"
+  },
+  "dependencies": {
+    "lodash": "^2.4.1",
+    "redis": "^0.12.1",
+    "request": "^2.51.0"
+  }
+}
