@@ -8,7 +8,7 @@ var FollowersGraph = function() {
 
   this.force = d3.layout.force()
     .charge(-300)
-    .linkDistance(10)
+    .linkDistance(32)
     // .linkStrength(0.1)
     .gravity(0.5)
     .size([width, height]);
@@ -17,33 +17,22 @@ var FollowersGraph = function() {
     .attr('width', width)
     .attr('height', height);
 
-  this.main = this.svg.append('g');
+  this.link = this.svg.selectAll('.link');
+  this.node = this.svg.selectAll('.node');
 
-  this.link = this.main.append('g').selectAll('.link');
-  this.node = this.main.append('g').selectAll('.node');
+  this._onNodeClickBound = this._onNodeClick.bind(this);
 
   this.zoom = d3.behavior.zoom()
     .scaleExtent([1, 10])
     .on('zoom', function() {
-      this.main.attr('transform', 'translate(' + d3.event.translate + ')' + 'scale(' + d3.event.scale + ')');
+      console.log('zoom')
+      // this.svg.style('transform', 'translate(' + d3.event.translate + ')' + 'scale(' + d3.event.scale + ')');
     }.bind(this));
 
   this.drag = d3.behavior.drag();
 
-  // this.svg.call(this.drag);
-  // this.svg.call(this.zoom);
-
-
-  this.svg
-    .append('defs')
-      .append('clipPath')
-      .attr('id', 'avatar-mask')
-        .append('rect')
-        .attr('rx', 32)
-        .attr('x', -32*0.5)
-        .attr('y', -32*0.5)
-        .attr('width', 32)
-        .attr('height', 32);
+  this.svg.call(this.drag);
+  this.svg.call(this.zoom);
 
   this.force.on('tick', function() {
     // var q = d3.geom.quadtree(this.node),
@@ -79,33 +68,32 @@ FollowersGraph.prototype.render = function () {
   this.link = this.link.data(this.followerLinksData);
 
   this.link
-    .enter().append('line')
-    .attr('class', 'link')
-    .style('stroke-width', function(d) { return 1; });
+    .enter().insert('line', ':first-child')
+    .attr('stroke-width', function(d) { return 1; })
+    .attr('stroke', '#000')
+    .attr('opacity', 0.3);
+
 
   this.node = this.node.data(this.usersData);
 
   this.node
-    .enter().append('g')
-      .attr('class', 'node')
+    .enter().append('image')
+      .attr('xlink:href', function(d) { return d.avatar_url; })
+      .attr('x', -32*0.5)
+      .attr('y', -32*0.5)
       .attr('width', 32)
-      .attr('height', 32);
+      .attr('height', 32)
+      .on('click', this._onNodeClickBound);
 
   this.node.call(this.force.drag);
 
-  this.node.append('image')
-    .attr('xlink:href', function(d) { return d.avatar_url; })
-    .attr('clip-path', 'url(#avatar-mask)')
-    .attr('x', -32*0.5)
-    .attr('y', -32*0.5)
-    .attr('width', 32)
-    .attr('height', 32)
-    .on('click', function(d) {
-      this.add(d.login);
-    }.bind(this));
-
   this.node.append('title')
     .text(function(d) { return d.login; });
+};
+
+FollowersGraph.prototype._onNodeClick = function(d) {
+  console.log(d);
+  this.addUserByUsername(d.login);
 };
 
 FollowersGraph.prototype._addUser = function(user) {
@@ -128,7 +116,7 @@ FollowersGraph.prototype._addFollowerLink = function(targetUser, sourceUser) {
   }
 };
 
-FollowersGraph.prototype.add = function(username) {
+FollowersGraph.prototype.addUserByUsername = function(username) {
   d3.json('api/users/' + username + '/followers', function(error, result) {
     if (error) return console.warn(error);
 
@@ -167,4 +155,4 @@ function collide(node) {
 
 
 var followersGraph = new FollowersGraph();
-followersGraph.add('FarhadG');
+followersGraph.addUserByUsername('FarhadG');
