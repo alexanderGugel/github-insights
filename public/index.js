@@ -1,14 +1,14 @@
 'use strict';
 
 var FollowersGraph = function() {
-  var width = window.innerWidth,
-  height = window.innerHeight;
+  var width = window.innerWidth*2,
+  height = window.innerHeight*2;
 
   this.color = d3.scale.category20();
 
   this.force = d3.layout.force()
     .charge(-120)
-    .linkDistance(100)
+    .linkDistance(window.innerWidth*0.5)
     .linkStrength(0.1)
     .gravity(0.05)
     .size([width, height]);
@@ -22,24 +22,16 @@ var FollowersGraph = function() {
   this.link = this.main.append('g').selectAll('.link');
   this.node = this.main.append('g').selectAll('.node');
 
-
   this.zoom = d3.behavior.zoom()
     .scaleExtent([1, 10])
     .on('zoom', function() {
-      console.log(d3.event.translate)
       this.main.attr('transform', 'translate(' + d3.event.translate + ')' + 'scale(' + d3.event.scale + ')');
     }.bind(this));
 
-  this.drag = d3.behavior.drag()
-    .on('drag', function() {
-      // this.svg.style('transform', 'translate(' + d3.event.translate + ')');
-    }.bind(this));
+  this.drag = d3.behavior.drag();
 
   this.svg.call(this.drag);
   this.svg.call(this.zoom);
-
-
-
 
 
   this.svg
@@ -54,13 +46,13 @@ var FollowersGraph = function() {
         .attr('height', 32);
 
   this.force.on('tick', function() {
-    var q = d3.geom.quadtree(this.node),
-        i = 0,
-        n = this.node;
+    // var q = d3.geom.quadtree(this.node),
+    //     i = 0,
+    //     n = this.node;
 
-    this.node.each(function(node) {
-      q.visit(collide(node));
-    });
+    // this.node.each(function(node) {
+    //   q.visit(collide(node));
+    // });
 
     this.link
       .attr('x1', function(d) { return d.source.x; })
@@ -175,4 +167,4 @@ function collide(node) {
 
 
 var followersGraph = new FollowersGraph();
-followersGraph.add('marcwilhite');
+followersGraph.add('FarhadG');

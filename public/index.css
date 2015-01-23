@@ -14,6 +14,19 @@ input[type=text] {
   border-radius: 2px;
   paddding: 0.5em;
 }
+nav {
+  position: absolute;
+  right: 1em;
+  top: 1em;
+  bottom: 1em;
+  background: rgba(255,255,255,0.8);
+  padding: 1em;
+  max-width: 100%;
+  width: 300px;
+  z-index: 99;
+  border: 2px solid #999;
+  display: none;
+}
 svg {
   position: absolute;
   top: 0;
