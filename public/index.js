@@ -1,5 +1,13 @@
 'use strict';
 
+var $toast = document.getElementById('toast');
+
+function toast(html, type) {
+  $toast.innerHTML = html;
+  $toast.className = type;
+  $toast.style.opacity = 1;
+}
+
 var FollowersGraph = function() {
   var width = window.innerWidth,
   height = window.innerHeight;
@@ -31,8 +39,8 @@ var FollowersGraph = function() {
 
   this.drag = d3.behavior.drag();
 
-  this.svg.call(this.drag);
-  this.svg.call(this.zoom);
+  // this.svg.call(this.drag);
+  // this.svg.call(this.zoom);
 
   this.force.on('tick', function() {
     // var q = d3.geom.quadtree(this.node),
@@ -119,6 +127,8 @@ FollowersGraph.prototype._addFollowerLink = function(targetUser, sourceUser) {
 FollowersGraph.prototype.addUserByUsername = function(username) {
   d3.json('api/users/' + username + '/followers', function(error, result) {
     if (error) return console.warn(error);
+
+    toast('Fetched followers for ' + username, 'success');
 
     result.followers.forEach(function(follower) {
       this._addFollowerLink(result.user, follower);

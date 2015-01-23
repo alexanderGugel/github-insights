@@ -7,7 +7,7 @@ html {
 }
 
 body {
-    font-family: 'Source Sans Pro', sans-serif;
+  font: 14px/1.5 'Source Sans Pro', sans-serif;
 }
 
 input[type=text] {
@@ -40,7 +40,33 @@ svg {
   height: 100%;
   width: 100%;
   overflow: hidden;
-  
+}
+
+#toast {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  display: inline-block;
+  max-width: 100%;
+  padding: 0.5em;
+  color: #fff;
+  border-radius: 2px;
+  transition: all 500ms;
+}
+
+@media (min-width: 500px) {
+  #toast {
+    margin: 5px;
+    padding: 1em;
+  }
+}
+
+#toast.success {
+  background: #4CAF50;
+}
+
+#toast.error {
+  background: #F44336;
 }
 
 .node {
