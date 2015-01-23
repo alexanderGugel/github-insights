@@ -46,14 +46,6 @@ var FollowersGraph = function() {
         .attr('height', 32);
 
   this.force.on('tick', function() {
-    // var q = d3.geom.quadtree(this.node),
-    //     i = 0,
-    //     n = this.node;
-
-    // this.node.each(function(node) {
-    //   q.visit(collide(node));
-    // });
-
     this.link
       .attr('x1', function(d) { return d.source.x; })
       .attr('y1', function(d) { return d.source.y; })
@@ -164,7 +156,45 @@ function collide(node) {
   };
 }
 
+// var followersGraph = new FollowersGraph();
+// followersGraph.add('FarhadG');
 
 
-var followersGraph = new FollowersGraph();
-followersGraph.add('FarhadG');
+
+
+
+
+
+var Graph = function() {
+  this.canvas = document.createElement('canvas');
+  this.context = this.canvas.getContext('2d');
+  this.canvas.width = window.innerWidth;
+  this.canvas.height = window.innerHeight;
+
+  this.nodes = [];
+  this.edges = [];
+};
+
+Graph.prototype.render = function() {
+  this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
+  this.context.beginPath();
+  this.context.moveTo(100, 150);
+  this.context.lineTo(450, 50);
+  this.context.stroke();
+};
+
+
+var graph = new Graph();
+document.body.appendChild(graph.canvas);
+
+var loop = function() {
+  graph.render();
+  requestAnimationFrame(loop);
+};
+
+loop();
+
+// setTimeout(function() {
+  
+// }, 500);
+
