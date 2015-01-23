@@ -1,16 +1,16 @@
 'use strict';
 
 var FollowersGraph = function() {
-  var width = window.innerWidth*2,
-  height = window.innerHeight*2;
+  var width = window.innerWidth,
+  height = window.innerHeight;
 
   this.color = d3.scale.category20();
 
   this.force = d3.layout.force()
-    .charge(-120)
-    .linkDistance(window.innerWidth*0.5)
-    .linkStrength(0.1)
-    .gravity(0.05)
+    .charge(-300)
+    .linkDistance(10)
+    // .linkStrength(0.1)
+    .gravity(0.5)
     .size([width, height]);
 
   this.svg = d3.select('body').append('svg')
@@ -30,8 +30,8 @@ var FollowersGraph = function() {
 
   this.drag = d3.behavior.drag();
 
-  this.svg.call(this.drag);
-  this.svg.call(this.zoom);
+  // this.svg.call(this.drag);
+  // this.svg.call(this.zoom);
 
 
   this.svg
