@@ -74,6 +74,10 @@ nav form button {
   border-bottom: 1px solid #eee;
   margin-top: 0;
 }
+#user-overlay h1.login a {
+  color: #000;
+  text-decoration: none;
+}
 canvas {
   background: #efefef;
   position: absolute;
