@@ -37,13 +37,16 @@ var followerLinksData;
 var _map;
 var zoom;
 var _addedByUsername;
+var _addFollowerLinkQueue;
 var WIDTH = window.innerWidth;
 var HEIGHT = window.innerHeight;
 
 function init() {
   force = d3.layout.force()
-    .charge(-500)
-    .linkDistance(50)
+    .charge(-400)
+    .linkDistance(400)
+    .linkStrength(0.1)
+    .chargeDistance(400)
     .gravity(0.5)
     .size([WIDTH, HEIGHT])
     .on('tick', tick);
@@ -72,7 +75,6 @@ function init() {
     .append('svg:path')
       .attr('d', 'M0,-5L10,0L0,5');
 
-
   edge = svg.selectAll('.edge');
   node = svg.selectAll('.node');
 
@@ -84,11 +86,17 @@ function reset() {
   followerLinksData = [];
   _map = {};
   _addedByUsername = {};
+  _addFollowerLinkQueue = [];
   render();
 }
 
 function tick() {
+  var nextFollowerLink = _addFollowerLinkQueue.pop();
+  if (nextFollowerLink) _addFollowerLink.apply(null, nextFollowerLink);
   node
+    .attr('opacity', function(d) {
+      return d.linksAdded ? 1 : 0.4;
+    })
     .attr('transform', function(d) {
       d.x = Math.max(32*0.5, Math.min(WIDTH - 32*0.5, d.x));
       d.y = Math.max(32*0.5, Math.min(HEIGHT - 32*0.5, d.y));;
@@ -112,7 +120,7 @@ function render() {
 
   edge
     .enter().insert('line', ':first-child')
-      .attr("marker-end", "url(#end)")
+      // .attr("marker-end", "url(#end)")
       .attr('class', 'edge');
   edge
     .exit().remove();
@@ -150,13 +158,19 @@ function _addUser(user) {
   return _map[user.id];
 }
 
+setInterval(function() {
+  console.log(_addFollowerLinkQueue.length)
+}, 100)
+
 function _addFollowerLink(targetUser, sourceUser) {
+  targetUser.linksAdded = true;
   targetUser = _addUser(targetUser);
   sourceUser = _addUser(sourceUser);
   if (!_map[sourceUser.index + '-' + targetUser.index]) {
     _map[sourceUser.id + '-' + targetUser.id] = true;
     followerLinksData.push({ source: sourceUser, target: targetUser });
   }
+  render();
 }
 
 function addUserByUsername(username) {
@@ -169,7 +183,10 @@ function addUserByUsername(username) {
     }
     toast('Fetched followers for ' + usernameToLink(username), 'success');
     result.following.forEach(function(follower) {
-      _addFollowerLink(result.user, follower);
+      // Preload image
+      var image = new Image();
+      image.src = follower.avatar_url;
+      image.onload = _addFollowerLink.bind(null, result.user, follower);
     });
     render();
   });
