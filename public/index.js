@@ -16,6 +16,7 @@ var force, svg, edge, node;
 var usersData = [];
 var followerLinksData = [];
 var _map = {};
+var zoom;
 
 function init() {
   force = d3.layout.force()
@@ -24,36 +25,31 @@ function init() {
     .gravity(0.5)
     .size([window.innerWidth, window.innerHeight]);
 
+
+  zoom = d3.behavior.zoom()
+    .scaleExtent([1, 10])
+    .on('zoom', onZoom);
+
   svg = d3.select('body').insert('svg', ':first-child')
     .attr('width', window.innerWidth)
-    .attr('height', window.innerHeight);
+    .attr('height', window.innerHeight)
+    .call(zoom);
 
   edge = svg.selectAll('.edge');
   node = svg.selectAll('.node');
 
-  // var zoom = d3.behavior.zoom()
-  //   .scaleExtent([1, 10])
-  //   .on('zoom', function() {
-  //     this._scale = d3.event.scale;
-  //     this._translate = d3.event.translate;
-  //     this.svg.style('transform', 'scale(' + this._scale + ')');
-  //   }.bind(this));
+  force.on('tick', tick);
+}
 
-  // this.drag = d3.behavior.drag();
+function tick() {
+  edge
+    .attr('x1', function(d) { return d.source.x; })
+    .attr('y1', function(d) { return d.source.y; })
+    .attr('x2', function(d) { return d.target.x; })
+    .attr('y2', function(d) { return d.target.y; });
 
-  // this.svg.call(this.drag);
-  // this.svg.call(this.zoom);
-
-  force.on('tick', function() {
-    edge
-      .attr('x1', function(d) { return d.source.x; })
-      .attr('y1', function(d) { return d.source.y; })
-      .attr('x2', function(d) { return d.target.x; })
-      .attr('y2', function(d) { return d.target.y; });
-
-    node
-      .attr('transform', function(d) { return 'translate(' + d.x + ',' + d.y + ')'; });
-  });
+  node
+    .attr('transform', function(d) { return 'translate(' + d.x + ',' + d.y + ')'; });
 }
 
 function render() {
@@ -85,6 +81,10 @@ function render() {
     .text(function(d) { return d.login; });
 }
 
+function onZoom() {
+  svg.style('transform', 'scale(' + d3.event.scale + ')');
+}
+
 function _onNodeClick(d) {
   addUserByUsername(d.login);
 }
@@ -106,7 +106,7 @@ function _addFollowerLink(targetUser, sourceUser) {
   }
 }
 
- function addUserByUsername(username) {
+function addUserByUsername(username) {
   toast('Fetching followers for ' + usernameToLink(username) + '...', 'progress');
   d3.json('api/users/' + username + '/followers', function(error, result) {
     if (error) {
