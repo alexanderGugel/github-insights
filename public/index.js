@@ -43,7 +43,7 @@ var HEIGHT = window.innerHeight;
 function init() {
   force = d3.layout.force()
     .charge(-500)
-    .linkDistance(1)
+    .linkDistance(50)
     .gravity(0.5)
     .size([WIDTH, HEIGHT])
     .on('tick', tick);
@@ -56,6 +56,22 @@ function init() {
     .attr('width', WIDTH)
     .attr('height', HEIGHT)
     .call(zoom);
+
+
+  // build the arrow.
+  svg.append('svg:defs').selectAll('marker')
+      .data(['end'])      // Different link/path types can be defined here
+    .enter().append('svg:marker')    // This section adds in the arrows
+      .attr('id', String)
+      .attr('viewBox', '0 -5 10 10')
+      .attr('refX', 32+3)
+      .attr('refY', -0.5)
+      .attr('markerWidth', 6)
+      .attr('markerHeight', 6)
+      .attr('orient', 'auto')
+    .append('svg:path')
+      .attr('d', 'M0,-5L10,0L0,5');
+
 
   edge = svg.selectAll('.edge');
   node = svg.selectAll('.node');
@@ -80,10 +96,10 @@ function tick() {
     });
 
   edge
-    .attr('x1', function(d) { return d.source.x; })
-    .attr('y1', function(d) { return d.source.y; })
-    .attr('x2', function(d) { return d.target.x; })
-    .attr('y2', function(d) { return d.target.y; });
+    .attr('x2', function(d) { return d.source.x; })
+    .attr('y2', function(d) { return d.source.y; })
+    .attr('x1', function(d) { return d.target.x; })
+    .attr('y1', function(d) { return d.target.y; });
 }
 
 function render() {
@@ -96,6 +112,7 @@ function render() {
 
   edge
     .enter().insert('line', ':first-child')
+      .attr("marker-end", "url(#end)")
       .attr('class', 'edge');
   edge
     .exit().remove();
@@ -110,7 +127,7 @@ function render() {
       .attr('height', 32)
       .attr('x', -32*0.5)
       .attr('y', -32*0.5)
-      .on('click', _onNodeClick)
+      .on('click', _onNodeClick);
   node
     .exit().remove();
 
