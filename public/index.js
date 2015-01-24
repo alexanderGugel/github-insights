@@ -32,7 +32,7 @@ $form.addEventListener('submit', function(event) {
   $username.value = '';
 });
 
-var force, canvas, context;
+var force, canvas, context, drag;
 var usersData;
 var followerLinksData;
 var _map;
@@ -41,6 +41,8 @@ var WIDTH = window.innerWidth;
 var HEIGHT = window.innerHeight;
 
 function init() {
+  drag = d3.behavior.drag();
+
   force = d3.layout.force()
     .charge(-400)
     .linkDistance(400)
@@ -53,52 +55,45 @@ function init() {
   canvas = d3.select('body')
     .insert('canvas', ':first-child')
     .attr('width', window.innerWidth)
-    .attr('height', window.innerHeight);
+    .attr('height', window.innerHeight)
+    .call(drag);
 
   context = canvas.node().getContext('2d');
 
   var dragging = null;
-  canvas.node().addEventListener('mousemove', function(e) {
+
+  drag.on('drag', function() {
+    if (!dragging) {
+      usersData.forEach(function(d) {
+        if (
+          d3.event.x > d.x - NODE_SIZE*0.5 &&
+          d3.event.x < d.x + NODE_SIZE*0.5 &&
+          d3.event.y > d.y - NODE_SIZE*0.5 &&
+          d3.event.y < d.y + NODE_SIZE*0.5
+        ) {
+          dragging = d;
+        }
+      });
+    }
+
     if (!dragging) return;
-    dragging.px = e.x;
-    dragging.py = e.y;
-    dragging.x = e.x;
-    dragging.y = e.y; 
+    dragging.px = d3.event.x;
+    dragging.py = d3.event.y;
+    dragging.x = d3.event.x;
+    dragging.y = d3.event.y; 
     tick();
   });
 
-  canvas.node().addEventListener('mouseup', function(e) {
+  drag.on('dragend', function() {
+    if (dragging) addUserByUsername(dragging.login);
     dragging = null;
     force.resume();
   });
 
-  canvas.node().addEventListener('mousedown', function(e) {
+  drag.on('dragstart', function() {
     dragging = null;
+    d3.event.sourceEvent.stopPropagation();
     force.stop();
-
-    usersData.forEach(function(d) {
-      if (
-        e.x > d.x - NODE_SIZE*0.5 &&
-        e.x < d.x + NODE_SIZE*0.5 &&
-        e.y > d.y - NODE_SIZE*0.5 &&
-        e.y < d.y + NODE_SIZE*0.5
-      ) {
-        dragging = d;
-      }
-    });
-  });
-
-  canvas.node().addEventListener('click', function(e) {
-    usersData.forEach(function(d) {
-      if (
-        e.x > d.x - NODE_SIZE*0.5 &&
-        e.x < d.x + NODE_SIZE*0.5 &&
-        e.y > d.y - NODE_SIZE*0.5 &&
-        e.y < d.y + NODE_SIZE*0.5
-      ) {
-        addUserByUsername(d.login);
-      }
-    });
   });
 
   reset();
