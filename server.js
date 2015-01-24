@@ -6,12 +6,12 @@ var _ = require('lodash');
 
 server.use(express.static(__dirname + '/public'));
 
-server.get('/api/users/:username/followers', function(req, res) {
-    followers(req.params.username, function(error, followers) {
+server.get('/api/users/:username/following', function(req, res) {
+    following(req.params.username, function(error, following) {
         if (error) {
             res.status(400).send({error: 'Something went wrong'});
         } else {
-            res.send(followers);
+            res.send(following);
         }
     });
 });
@@ -59,7 +59,7 @@ var user = function(username, callback) {
     });
 };
 
-var followers = function(username, callback) {
+var following = function(username, callback) {
     var result = {};
     var progress = _.after(2, function() {
         callback(null, result);
@@ -69,20 +69,20 @@ var followers = function(username, callback) {
         result.user = user;
         progress();
     });
-    githubPaginate('https://api.github.com/users/' + username + '/followers?per_page=100&page=0', function(error, _bodies) {
+    githubPaginate('https://api.github.com/users/' + username + '/following?per_page=100&page=0', function(error, _bodies) {
         if (error) return callback(error);
-        var followers = {};
+        var following = {};
         var addToFollowers = function(follower) {
-            followers[follower.id] = follower;
+            following[follower.id] = follower;
         };
         for (var bodyUrl in _bodies) {
             _bodies[bodyUrl].forEach(addToFollowers);
         }
-        var followersArray = [];
-        for (var id in followers) {
-            followersArray.push(followers[id]);
+        var followingArray = [];
+        for (var id in following) {
+            followingArray.push(following[id]);
         }
-        result.followers = followersArray;
+        result.following = followingArray;
         progress();
     });
 };
@@ -112,8 +112,8 @@ var githubPaginate = function(url, callback, _bodies) {
     });
 };
 
-// followers('alexanderGugel', function(error, followers) {
-//     console.log(followers);
+// following('alexanderGugel', function(error, following) {
+//     console.log(following);
 // });
 
 // stargazers('Famous', 'famous', function(error, stargazers) {

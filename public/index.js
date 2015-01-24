@@ -7,6 +7,7 @@
 var $toast = document.getElementById('toast');
 var $reset = document.getElementById('reset');
 var $form = document.querySelector('nav form');
+var $username = $form.querySelector('input');
 
 function toast(html, type) {
   $toast.innerHTML = html;
@@ -26,9 +27,8 @@ $reset.addEventListener('click', function(event) {
 
 $form.addEventListener('submit', function(event) {
   event.preventDefault();
-  var username = $form.querySelector('input').value;
-  addUserByUsername(username);
-  $form.querySelector('input').value = '';
+  addUserByUsername($username.value);
+  $username.value = '';
 });
 
 var force, svg, edge, node;
@@ -37,28 +37,28 @@ var followerLinksData;
 var _map;
 var zoom;
 var _addedByUsername;
+var WIDTH = window.innerWidth;
+var HEIGHT = window.innerHeight;
 
 function init() {
   force = d3.layout.force()
     .charge(-500)
-    .linkDistance(50)
+    .linkDistance(1)
     .gravity(0.5)
-    .size([window.innerWidth, window.innerHeight]);
-
+    .size([WIDTH, HEIGHT])
+    .on('tick', tick);
 
   zoom = d3.behavior.zoom()
     .scaleExtent([1, 10])
     .on('zoom', onZoom);
 
   svg = d3.select('body').insert('svg', ':first-child')
-    .attr('width', window.innerWidth)
-    .attr('height', window.innerHeight)
+    .attr('width', WIDTH)
+    .attr('height', HEIGHT)
     .call(zoom);
 
   edge = svg.selectAll('.edge');
   node = svg.selectAll('.node');
-
-  force.on('tick', tick);
 
   reset();
 }
@@ -72,14 +72,18 @@ function reset() {
 }
 
 function tick() {
+  node
+    .attr('transform', function(d) {
+      d.x = Math.max(32*0.5, Math.min(WIDTH - 32*0.5, d.x));
+      d.y = Math.max(32*0.5, Math.min(HEIGHT - 32*0.5, d.y));;
+      return 'translate(' + d.x + ',' + d.y + ')';
+    });
+
   edge
     .attr('x1', function(d) { return d.source.x; })
     .attr('y1', function(d) { return d.source.y; })
     .attr('x2', function(d) { return d.target.x; })
     .attr('y2', function(d) { return d.target.y; });
-
-  node
-    .attr('transform', function(d) { return 'translate(' + d.x + ',' + d.y + ')'; });
 }
 
 function render() {
@@ -142,12 +146,12 @@ function addUserByUsername(username) {
   if (_addedByUsername[username]) return;
   _addedByUsername[username] = true;
   toast('Fetching followers for ' + usernameToLink(username) + '...', 'progress');
-  d3.json('api/users/' + username + '/followers', function(error, result) {
+  d3.json('api/users/' + username + '/following', function(error, result) {
     if (error) {
       return toast('Could not fetch followers for ' + usernameToLink(username), 'error');
     }
     toast('Fetched followers for ' + usernameToLink(username), 'success');
-    result.followers.forEach(function(follower) {
+    result.following.forEach(function(follower) {
       _addFollowerLink(result.user, follower);
     });
     render();
