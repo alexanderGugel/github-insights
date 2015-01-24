@@ -51,12 +51,31 @@ nav form input {
   border-right: 0;
   padding: 0 0.25em;
 }
+nav form input:focus {
+  background: #fff;
+}
 nav form button {
   flex-grow: 1;
   padding: 0 0.5em;
   border: 1px solid #999;
 }
+#user-overlay {
+  box-shadow: 0 19px 38px rgba(0,0,0,0.3), 0 15px 12px rgba(0,0,0,0.22);
+  position: absolute;
+  bottom: 1em;
+  left: 1em;
+  max-width: 100%;
+  width: 500px;
+  background: #fff;
+  border-radius: 2px;
+}
+#user-overlay h1.login {
+  padding: 0.5em;
+  border-bottom: 1px solid #eee;
+  margin-top: 0;
+}
 canvas {
+  background: #efefef;
   position: absolute;
   top: 0;
   right: 0;

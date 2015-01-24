@@ -7,6 +7,7 @@ var $toast = document.getElementById('toast');
 var $reset = document.getElementById('reset');
 var $form = document.querySelector('nav form');
 var $username = $form.querySelector('input');
+var $userOverlay = document.getElementById('user-overlay');
 
 var NODE_SIZE = 32;
 
@@ -17,7 +18,11 @@ function toast(html, type) {
 }
 
 function usernameToLink(username) {
-  return ('<a target="_blank" href="https://github.com/' + username + '">' + username + '</a>');
+  return '<a target="_blank" href="https://github.com/' + username + '">' + username + '</a>';
+}
+
+function displayUser(user) {
+  $userOverlay.querySelector('.login').textContent = '@' + user.login;
 }
 
 $reset.addEventListener('click', function(event) {
@@ -103,6 +108,7 @@ function init() {
         d3.event.y > d.y - NODE_SIZE*0.5 &&
         d3.event.y < d.y + NODE_SIZE*0.5
       ) {
+        displayUser(d);
         addUserByUsername(d.login);
       }
     });
