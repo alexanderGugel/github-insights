@@ -6,6 +6,7 @@
 
 var $toast = document.getElementById('toast');
 var $reset = document.getElementById('reset');
+var $form = document.querySelector('nav form');
 
 function toast(html, type) {
   $toast.innerHTML = html;
@@ -17,7 +18,18 @@ function usernameToLink(username) {
   return ('<a target="_blank" href="https://github.com/' + username + '">' + username + '</a>');
 }
 
-$reset.addEventListener('click', reset);
+$reset.addEventListener('click', function(event) {
+  event.preventDefault();
+  event.stopPropagation();
+  reset();
+});
+
+$form.addEventListener('submit', function(event) {
+  event.preventDefault();
+  var username = $form.querySelector('input').value;
+  addUserByUsername(username);
+  $form.querySelector('input').value = '';
+});
 
 var force, svg, edge, node;
 var usersData;

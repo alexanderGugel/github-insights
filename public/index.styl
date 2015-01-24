@@ -10,41 +10,79 @@ body {
   font: 14px/1.5 'Source Sans Pro', sans-serif;
 }
 
-input[type=text] {
-    border: 1px solid #eee;
-    border-radius: 2px;
-    paddding: 0.5em;
-}
-
 nav {
+  text-align: right;
+  z-index: 99999;
   position: absolute;
-  right: 1em
-  top: 1em
-  bottom: 1em
-  background: rgba(255, 255, 255, 0.8)
-  padding: 1em
-  max-width: 100%
-  width: 300px
-  z-index: 99
-  border: 2px solid #999
-  display: none;
+  right: 0;
+  top: 0;
+  padding: 0.25em;
+  
+  #add, #reset {
+    cursor: pointer;
+    font-size: 2em;
+    height: 1.8em;
+    margin: 0;
+    text-align: center;
+  }
+  
+  #reset {
+    width: 1.6em;
+    margin-right: 0.2em;
+    border: 0;
+    opacity: 0.4;
+    display: inline-block;
+    
+    &:hover {
+      opacity: 1;
+    }
+  }
+  
+  form {
+    display: inline-block;
+    #username {
+      margin: 0;
+      padding: 0.1em;
+      border: 1px solid #999;
+      max-width: calc(100% - 1.8em - 1.8em);
+      width: 100%;
+      font-size: 2em;
+      height: 1.8em;
+      
+      &:focus {
+        outline: 0;
+        border: 1px solid #03A9F4;
+      }
+    }
+    
+    #add {
+      border: 1px solid #999;
+      border-left: 0;
+      padding: 0;
+      background: none;
+      width: 1.8em;
+    }
+  }
+
+  // #reset {
+  //   width: 3em;
+  //   height: 3em;
+  //   display: inline-block;
+  //   cursor: pointer;
+  //   border: 0;
+  //   margin: 0;
+  //   padding: 0;
+    
+  //   opacity: 0.5;
+  //   font-size: 1em;
+  //   line-height: 1;
+    
+  //   &:hover {
+  //     opacity: 1;
+  //   }
+  // }
 }
 
-#reset {
-  position: absolute;
-  top: 0;
-  right: 0;
-  vertical-align: top;
-  line-height: 1;
-  font-size: 3em;
-  padding: 0.25em 0.25em 0 0;
-  cursor: pointer;
-  opacity: 0.5;
-  
-  &:hover {
-    opacity: 1;
-  }
-}
 
 svg {
   position: absolute;
