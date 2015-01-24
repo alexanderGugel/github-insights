@@ -8,6 +8,8 @@ var $reset = document.getElementById('reset');
 var $form = document.querySelector('nav form');
 var $username = $form.querySelector('input');
 
+var NODE_SIZE = 32;
+
 function toast(html, type) {
   $toast.innerHTML = html;
   $toast.className = type;
@@ -58,10 +60,10 @@ function init() {
   canvas.node().addEventListener('click', function(e) {
     usersData.forEach(function(d) {
       if (
-        e.x > d.x - 32*0.5 &&
-        e.x < d.x + 32*0.5 &&
-        e.y > d.y - 32*0.5 &&
-        e.y < d.y + 32*0.5
+        e.x > d.x - NODE_SIZE*0.5 &&
+        e.x < d.x + NODE_SIZE*0.5 &&
+        e.y > d.y - NODE_SIZE*0.5 &&
+        e.y < d.y + NODE_SIZE*0.5
       ) {
         addUserByUsername(d.login);
       }
@@ -102,19 +104,19 @@ function tick() {
     d.x = clamp(d.x, 0, window.innerWidth);
     d.y = clamp(d.y, 0, window.innerHeight);
     if (d.image) {
-      context.save();
-      context.beginPath();
-      context.arc(d.x, d.y, Math.sqrt(Math.pow(32*0.5, 2) + Math.pow(32*0.5, 2)) - 5, 0, 2 * Math.PI, true);
-      context.closePath();
-      context.clip();
+      // context.save();
+      // context.beginPath();
+      // context.arc(d.x, d.y, Math.sqrt(Math.pow(NODE_SIZE*0.5, 2) + Math.pow(NODE_SIZE*0.5, 2)), 0, 2 * Math.PI, true);
+      // context.closePath();
+      // context.clip();
       
-      context.drawImage(d.image, d.x - 32*0.5, d.y - 32*0.5, 32, 32);
+      context.drawImage(d.image, d.x - NODE_SIZE*0.5, d.y - NODE_SIZE*0.5, NODE_SIZE, NODE_SIZE);
 
-      context.beginPath();
-      context.arc(d.x, d.y, Math.sqrt(Math.pow(32*0.5, 2) + Math.pow(32*0.5, 2)) - 5, 0, 2 * Math.PI, true);
-      context.clip();
-      context.closePath();
-      context.restore();
+      // context.beginPath();
+      // context.arc(d.x, d.y, Math.sqrt(Math.pow(NODE_SIZE*0.5, 2) + Math.pow(NODE_SIZE*0.5, 2)), 0, 2 * Math.PI, true);
+      // context.clip();
+      // context.closePath();
+      // context.restore();
     } else {
       var image = new Image();
       image.src = d.avatar_url;
