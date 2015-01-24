@@ -216,7 +216,7 @@ function addUserByUsername(username) {
     toast('Fetched following for ' + usernameToLink(username), 'success');
     var user = _addUser(result.user);
     result.following.forEach(function(following) {
-      _addUser(following);
+      following = _addUser(following);
       var edge = { source: user, target: following };
       followerLinksData.push(edge);
       user.edges.push(edge);
