@@ -58,7 +58,7 @@ nav form #add {
   background: none;
   width: 1.8em;
 }
-svg {
+canvas {
   position: absolute;
   top: 0;
   right: 0;
