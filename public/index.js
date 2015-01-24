@@ -53,7 +53,7 @@ function init() {
     .linkDistance(400)
     .linkStrength(0.1)
     .chargeDistance(400)
-    .gravity(0.5)
+    // .gravity(0.5)
     .size([WIDTH, HEIGHT])
     .on('tick', tick);
 
