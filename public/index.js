@@ -82,6 +82,11 @@ function init() {
     }
 
     if (!dragging) return;
+
+    dragging.edges.forEach(function(edge) {
+      edge.highlight = true;
+    });
+
     dragging.px = d3.event.x;
     dragging.py = d3.event.y;
     dragging.x = d3.event.x;
@@ -90,7 +95,12 @@ function init() {
   });
 
   drag.on('dragend', function() {
-    dragging = null;
+    if (dragging) {
+      dragging.edges.forEach(function(edge) {
+        edge.highlight = false;
+      });
+      dragging = null;
+    }
     force.resume();
   });
 
@@ -155,7 +165,13 @@ function tick() {
     context.beginPath();
     context.moveTo(source.x,source.y);
     context.lineTo(target.x,target.y);
-    context.strokeStyle = '#ccc';
+
+    if (d.highlight) {
+      context.strokeStyle = 'blue';
+    } else {
+      context.strokeStyle = '#ccc';
+    }
+
     context.lineWidth = 1;
     context.stroke();
   });
@@ -164,25 +180,11 @@ function tick() {
     d.x = clamp(d.x, 0, window.innerWidth);
     d.y = clamp(d.y, 0, window.innerHeight);
     if (d.image) {
-      // context.save();
-      // context.beginPath();
-      // context.arc(d.x, d.y, Math.sqrt(Math.pow(NODE_SIZE*0.5, 2) + Math.pow(NODE_SIZE*0.5, 2)), 0, 2 * Math.PI, true);
-      // context.closePath();
-      // context.clip();
-      
       context.drawImage(d.image, d.x - NODE_SIZE*0.5, d.y - NODE_SIZE*0.5, NODE_SIZE, NODE_SIZE);
-
-      // context.beginPath();
-      // context.arc(d.x, d.y, Math.sqrt(Math.pow(NODE_SIZE*0.5, 2) + Math.pow(NODE_SIZE*0.5, 2)), 0, 2 * Math.PI, true);
-      // context.clip();
-      // context.closePath();
-      // context.restore();
     } else {
       var image = new Image();
+      image.onload = function() { d.image = image; };
       image.src = d.avatar_url;
-      image.onload = function() {
-        d.image = image;
-      };
     }
   });
 }
@@ -197,34 +199,30 @@ function reapplyForce() {
 function _addUser(user) {
   if (!_map[user.id]) {
     _map[user.id] = user;
+    user.edges = [];
     usersData.push(user);
   }
   return _map[user.id];
 }
 
-function _addFollowerLink(targetUser, sourceUser) {
-  targetUser.linksAdded = true;
-  targetUser = _addUser(targetUser);
-  sourceUser = _addUser(sourceUser);
-  if (!_map[sourceUser.index + '-' + targetUser.index]) {
-    _map[sourceUser.id + '-' + targetUser.id] = true;
-    followerLinksData.push({ source: sourceUser, target: targetUser });
-  }
-  reapplyForce();
-}
-
 function addUserByUsername(username) {
   if (_addedByUsername[username]) return;
   _addedByUsername[username] = true;
-  toast('Fetching followers for ' + usernameToLink(username) + '...', 'progress');
+  toast('Fetching following for ' + usernameToLink(username) + '...', 'progress');
   d3.json('api/users/' + username + '/following', function(error, result) {
     if (error) {
-      return toast('Could not fetch followers for ' + usernameToLink(username), 'error');
+      return toast('Could not fetch following for ' + usernameToLink(username), 'error');
     }
-    toast('Fetched followers for ' + usernameToLink(username), 'success');
-    result.following.forEach(function(follower) {
-      _addFollowerLink(result.user, follower);
+    toast('Fetched following for ' + usernameToLink(username), 'success');
+    var user = _addUser(result.user);
+    result.following.forEach(function(following) {
+      _addUser(following);
+      var edge = { source: user, target: following };
+      followerLinksData.push(edge);
+      user.edges.push(edge);
+      following.edges.push(edge);
     });
+    reapplyForce();
   });
 }
 
