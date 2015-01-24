@@ -108,6 +108,22 @@ function init() {
     });
   });
 
+  canvas.on('mousemove', function() {
+    for (var i = 0; i < usersData.length; i++) {
+      var d = usersData[i];
+      if (
+        d3.event.x > d.x - NODE_SIZE*0.5 &&
+        d3.event.x < d.x + NODE_SIZE*0.5 &&
+        d3.event.y > d.y - NODE_SIZE*0.5 &&
+        d3.event.y < d.y + NODE_SIZE*0.5
+      ) {
+        canvas.style('cursor', 'pointer');
+        return;
+      }
+    }
+    canvas.style('cursor', 'inherit');
+  });
+
   reset();
 }
 
