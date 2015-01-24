@@ -10,53 +10,51 @@ body {
   font: 14px/1.5 'Source Sans Pro', sans-serif;
 }
 nav {
-  text-align: right;
-  z-index: 99999;
   position: absolute;
   right: 0;
   top: 0;
   padding: 0.25em;
+  max-width: 100%;
+  text-align: inline-block;
+  display: flex;
+  flex-direction: row;
 }
-nav #add,
-nav #reset {
-  cursor: pointer;
+nav button,
+nav input {
+  height: 21px;
+  display: block;
+  border: 0;
+  margin: 0;
+  padding: 0;
   font-size: 2em;
   height: 1.8em;
-  margin: 0;
-  text-align: center;
+  background: none;
 }
 nav #reset {
-  width: 1.6em;
-  margin-right: 0.2em;
-  border: 0;
+  flex-grow: 1;
+  padding: 0 0.75em;
+  color: #999;
   opacity: 0.4;
-  display: inline-block;
+  cursor: pointer;
 }
 nav #reset:hover {
   opacity: 1;
 }
 nav form {
-  display: inline-block;
+  flex-grow: 1;
+  display: flex;
+  flex-direction: row;
 }
-nav form #username {
-  margin: 0;
-  padding: 0.1em;
+nav form input {
+  flex-grow: 1;
   border: 1px solid #999;
-  max-width: calc(100% - 1.8em - 1.8em);
-  width: 100%;
-  font-size: 2em;
-  height: 1.8em;
+  border-right: 0;
+  padding: 0 0.25em;
 }
-nav form #username:focus {
-  outline: 0;
-  border: 1px solid #03a9f4;
-}
-nav form #add {
+nav form button {
+  flex-grow: 1;
+  padding: 0 0.5em;
   border: 1px solid #999;
-  border-left: 0;
-  padding: 0;
-  background: none;
-  width: 1.8em;
 }
 canvas {
   position: absolute;

@@ -96,6 +96,10 @@ function init() {
     force.stop();
   });
 
+  canvas.node().addEventListener('click', function() {
+    console.log('click')
+  });
+
   reset();
 }
 
