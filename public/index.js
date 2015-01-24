@@ -85,7 +85,6 @@ function init() {
   });
 
   drag.on('dragend', function() {
-    if (dragging) addUserByUsername(dragging.login);
     dragging = null;
     force.resume();
   });
@@ -96,8 +95,17 @@ function init() {
     force.stop();
   });
 
-  canvas.node().addEventListener('click', function() {
-    console.log('click')
+  canvas.on('click', function() {
+    usersData.forEach(function(d) {
+      if (
+        d3.event.x > d.x - NODE_SIZE*0.5 &&
+        d3.event.x < d.x + NODE_SIZE*0.5 &&
+        d3.event.y > d.y - NODE_SIZE*0.5 &&
+        d3.event.y < d.y + NODE_SIZE*0.5
+      ) {
+        addUserByUsername(d.login);
+      }
+    });
   });
 
   reset();
