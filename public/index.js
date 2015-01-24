@@ -58,7 +58,6 @@ function init() {
   context = canvas.node().getContext('2d');
 
   var dragging = null;
-  
   canvas.node().addEventListener('mousemove', function(e) {
     if (!dragging) return;
     dragging.px = e.x;
@@ -70,13 +69,12 @@ function init() {
 
   canvas.node().addEventListener('mouseup', function(e) {
     dragging = null;
-    // reapplyForce();
     force.resume();
   });
 
   canvas.node().addEventListener('mousedown', function(e) {
     dragging = null;
-    // event.stopPropagation();
+    force.stop();
 
     usersData.forEach(function(d) {
       if (
@@ -86,7 +84,19 @@ function init() {
         e.y < d.y + NODE_SIZE*0.5
       ) {
         dragging = d;
-        // addUserByUsername(d.login);
+      }
+    });
+  });
+
+  canvas.node().addEventListener('click', function(e) {
+    usersData.forEach(function(d) {
+      if (
+        e.x > d.x - NODE_SIZE*0.5 &&
+        e.x < d.x + NODE_SIZE*0.5 &&
+        e.y > d.y - NODE_SIZE*0.5 &&
+        e.y < d.y + NODE_SIZE*0.5
+      ) {
+        addUserByUsername(d.login);
       }
     });
   });
