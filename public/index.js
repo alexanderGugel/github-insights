@@ -16,6 +16,9 @@ var FollowersGraph = function() {
   var width = window.innerWidth,
   height = window.innerHeight;
 
+  this._scale = 1;
+  this._translate = [0, 0];
+
   this.color = d3.scale.category20();
 
   this.force = d3.layout.force()
@@ -36,14 +39,17 @@ var FollowersGraph = function() {
   this.zoom = d3.behavior.zoom()
     .scaleExtent([1, 10])
     .on('zoom', function() {
-      console.log('zoom')
-      // this.svg.style('transform', 'translate(' + d3.event.translate + ')' + 'scale(' + d3.event.scale + ')');
+      this._scale = d3.event.scale;
+      this._translate = d3.event.translate;
+      this.svg.style('transform', 'scale(' + this._scale + ')');
     }.bind(this));
 
   this.drag = d3.behavior.drag();
 
-  // this.svg.call(this.drag);
-  // this.svg.call(this.zoom);
+  this.svg.call(this.drag);
+  this.svg.call(this.zoom);
+
+  var self = this;
 
   this.force.on('tick', function() {
     // var q = d3.geom.quadtree(this.node),
@@ -54,14 +60,16 @@ var FollowersGraph = function() {
     //   q.visit(collide(node));
     // });
 
-    this.link
-      .attr('x1', function(d) { return d.source.x; })
-      .attr('y1', function(d) { return d.source.y; })
-      .attr('x2', function(d) { return d.target.x; })
-      .attr('y2', function(d) { return d.target.y; });
+    self.link
+      .attr('x1', function(d) { return d.source.x + self._translate[0]; })
+      .attr('y1', function(d) { return d.source.y + self._translate[1]; })
+      .attr('x2', function(d) { return d.target.x + self._translate[0]; })
+      .attr('y2', function(d) { return d.target.y + self._translate[1]; });
 
-    this.node
-      .attr('transform', function(d) { return 'translate(' + d.x + ',' + d.y + ')'; });
+    self.node
+      .attr('transform', function(d) {
+        return 'translate(' + (d.x + self._translate[0]) + ',' + (d.y + self._translate[1]) + ')';
+      });
   }.bind(this));
 
   this.usersData = [];
