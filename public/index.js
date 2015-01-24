@@ -1,8 +1,7 @@
-'use strict';
-
-
 /* jshint undef: true, unused: true */
 /* global d3 */
+
+'use strict';
 
 var $toast = document.getElementById('toast');
 var $reset = document.getElementById('reset');
@@ -31,13 +30,11 @@ $form.addEventListener('submit', function(event) {
   $username.value = '';
 });
 
-var force, svg, edge, node;
+var force, canvas, context;
 var usersData;
 var followerLinksData;
 var _map;
-var zoom;
 var _addedByUsername;
-var _addFollowerLinkQueue;
 var WIDTH = window.innerWidth;
 var HEIGHT = window.innerHeight;
 
@@ -51,32 +48,25 @@ function init() {
     .size([WIDTH, HEIGHT])
     .on('tick', tick);
 
-  zoom = d3.behavior.zoom()
-    .scaleExtent([1, 10])
-    .on('zoom', onZoom);
+  canvas = d3.select('body')
+    .insert('canvas', ':first-child')
+    .attr('width', window.innerWidth)
+    .attr('height', window.innerHeight);
 
-  svg = d3.select('body').insert('svg', ':first-child')
-    .attr('width', WIDTH)
-    .attr('height', HEIGHT)
-    .call(zoom);
+  context = canvas.node().getContext('2d');
 
-
-  // build the arrow.
-  svg.append('svg:defs').selectAll('marker')
-      .data(['end'])      // Different link/path types can be defined here
-    .enter().append('svg:marker')    // This section adds in the arrows
-      .attr('id', String)
-      .attr('viewBox', '0 -5 10 10')
-      .attr('refX', 32+3)
-      .attr('refY', -0.5)
-      .attr('markerWidth', 6)
-      .attr('markerHeight', 6)
-      .attr('orient', 'auto')
-    .append('svg:path')
-      .attr('d', 'M0,-5L10,0L0,5');
-
-  edge = svg.selectAll('.edge');
-  node = svg.selectAll('.node');
+  canvas.node().addEventListener('click', function(e) {
+    usersData.forEach(function(d) {
+      if (
+        e.x > d.x - 32*0.5 &&
+        e.x < d.x + 32*0.5 &&
+        e.y > d.y - 32*0.5 &&
+        e.y < d.y + 32*0.5
+      ) {
+        addUserByUsername(d.login);
+      }
+    });
+  });
 
   reset();
 }
@@ -86,68 +76,60 @@ function reset() {
   followerLinksData = [];
   _map = {};
   _addedByUsername = {};
-  _addFollowerLinkQueue = [];
-  render();
+  reapplyForce();
+}
+
+function clamp(n, min, max) {
+  return Math.min(Math.max(n, min), max);
 }
 
 function tick() {
-  var nextFollowerLink = _addFollowerLinkQueue.pop();
-  if (nextFollowerLink) _addFollowerLink.apply(null, nextFollowerLink);
-  node
-    .attr('opacity', function(d) {
-      return d.linksAdded ? 1 : 0.4;
-    })
-    .attr('transform', function(d) {
-      d.x = Math.max(32*0.5, Math.min(WIDTH - 32*0.5, d.x));
-      d.y = Math.max(32*0.5, Math.min(HEIGHT - 32*0.5, d.y));;
-      return 'translate(' + d.x + ',' + d.y + ')';
-    });
+  context.clearRect(0, 0, canvas.node().width, canvas.node().height);
 
-  edge
-    .attr('x2', function(d) { return d.source.x; })
-    .attr('y2', function(d) { return d.source.y; })
-    .attr('x1', function(d) { return d.target.x; })
-    .attr('y1', function(d) { return d.target.y; });
+  followerLinksData.forEach(function(d) {
+    var source = d.source;
+    var target = d.target;
+    if (!target.image || !source.image) return;
+    context.beginPath();
+    context.moveTo(source.x,source.y);
+    context.lineTo(target.x,target.y);
+    context.strokeStyle = '#ccc';
+    context.lineWidth = 1;
+    context.stroke();
+  });
+
+  usersData.forEach(function(d) {
+    d.x = clamp(d.x, 0, window.innerWidth);
+    d.y = clamp(d.y, 0, window.innerHeight);
+    if (d.image) {
+      context.save();
+      context.beginPath();
+      context.arc(d.x, d.y, Math.sqrt(Math.pow(32*0.5, 2) + Math.pow(32*0.5, 2)) - 5, 0, 2 * Math.PI, true);
+      context.closePath();
+      context.clip();
+      
+      context.drawImage(d.image, d.x - 32*0.5, d.y - 32*0.5, 32, 32);
+
+      context.beginPath();
+      context.arc(d.x, d.y, Math.sqrt(Math.pow(32*0.5, 2) + Math.pow(32*0.5, 2)) - 5, 0, 2 * Math.PI, true);
+      context.clip();
+      context.closePath();
+      context.restore();
+    } else {
+      var image = new Image();
+      image.src = d.avatar_url;
+      image.onload = function() {
+        d.image = image;
+      };
+    }
+  });
 }
 
-function render() {
+function reapplyForce() {
   force = force
     .nodes(usersData)
     .links(followerLinksData)
     .start();
-
-  edge = edge.data(followerLinksData);
-
-  edge
-    .enter().insert('line', ':first-child')
-      // .attr("marker-end", "url(#end)")
-      .attr('class', 'edge');
-  edge
-    .exit().remove();
-
-  node = node.data(usersData);
-
-  node
-    .enter().append('image')
-      .attr('xlink:href', function(d) { return d.avatar_url; })
-      .attr('class', 'node')
-      .attr('width', 32)
-      .attr('height', 32)
-      .attr('x', -32*0.5)
-      .attr('y', -32*0.5)
-      .on('click', _onNodeClick);
-  node
-    .exit().remove();
-
-  node.call(force.drag);
-}
-
-function onZoom() {
-  svg.style('transform', 'scale(' + d3.event.scale + ')');
-}
-
-function _onNodeClick(d) {
-  addUserByUsername(d.login);
 }
 
 function _addUser(user) {
@@ -158,10 +140,6 @@ function _addUser(user) {
   return _map[user.id];
 }
 
-setInterval(function() {
-  console.log(_addFollowerLinkQueue.length)
-}, 100)
-
 function _addFollowerLink(targetUser, sourceUser) {
   targetUser.linksAdded = true;
   targetUser = _addUser(targetUser);
@@ -170,7 +148,7 @@ function _addFollowerLink(targetUser, sourceUser) {
     _map[sourceUser.id + '-' + targetUser.id] = true;
     followerLinksData.push({ source: sourceUser, target: targetUser });
   }
-  render();
+  reapplyForce();
 }
 
 function addUserByUsername(username) {
@@ -183,14 +161,12 @@ function addUserByUsername(username) {
     }
     toast('Fetched followers for ' + usernameToLink(username), 'success');
     result.following.forEach(function(follower) {
-      // Preload image
-      var image = new Image();
-      image.src = follower.avatar_url;
-      image.onload = _addFollowerLink.bind(null, result.user, follower);
+      _addFollowerLink(result.user, follower);
     });
-    render();
   });
 }
+
+
 
 
 init();
