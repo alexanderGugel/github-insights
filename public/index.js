@@ -41,16 +41,15 @@ var HEIGHT = window.innerHeight;
 function init() {
   force = d3.layout.force()
     .charge(-400)
-    .charge(0)
     .linkDistance(400)
-    // .linkStrength(0.1)
+    .linkStrength(0.1)
     .chargeDistance(400)
     .gravity(0.5)
     .size([WIDTH, HEIGHT])
     .on('tick', tick);
 
   canvas = d3.select('body')
-    .append('canvas')
+    .insert('canvas', ':first-child')
     .attr('width', window.innerWidth)
     .attr('height', window.innerHeight);
 
@@ -69,7 +68,6 @@ function init() {
     });
   });
 
-
   reset();
 }
 
@@ -79,6 +77,10 @@ function reset() {
   _map = {};
   _addedByUsername = {};
   reapplyForce();
+}
+
+function clamp(n, min, max) {
+  return Math.min(Math.max(n, min), max);
 }
 
 function tick() {
@@ -97,6 +99,8 @@ function tick() {
   });
 
   usersData.forEach(function(d) {
+    d.x = clamp(d.x, 0, window.innerWidth);
+    d.y = clamp(d.y, 0, window.innerHeight);
     if (d.image) {
       context.save();
       context.beginPath();
