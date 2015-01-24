@@ -1,6 +1,9 @@
-attribute vec3 aVertexPosition;
-uniform mat4 uMVMatrix;
-uniform mat4 uPMatrix;
-void main(void) {
-    gl_Position = uPMatrix * uMVMatrix * vec4(aVertexPosition, 1.0);
-}
+ attribute vec2 vertexCoords;
+ uniform mat3 coordinateTransform;
+ uniform float pointSize;
+ void main() {
+    vec3 transformedCoords = coordinateTransform * vec3(vertexCoords, 1.0);
+    gl_Position = vec4(transformedCoords.xy, 0.0, 1.0);
+    gl_PointSize = pointSize;
+ }
+ 
