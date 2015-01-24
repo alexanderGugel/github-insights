@@ -61,14 +61,17 @@ function init() {
   
   canvas.node().addEventListener('mousemove', function(e) {
     if (!dragging) return;
-    console.log(dragging)
+    dragging.px = e.x;
+    dragging.py = e.y;
     dragging.x = e.x;
-    dragging.y = e.y;
+    dragging.y = e.y; 
+    tick();
   });
 
   canvas.node().addEventListener('mouseup', function(e) {
     dragging = null;
-    reapplyForce();
+    // reapplyForce();
+    force.resume();
   });
 
   canvas.node().addEventListener('mousedown', function(e) {
