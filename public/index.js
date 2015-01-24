@@ -8,6 +8,10 @@ function toast(html, type) {
   $toast.style.opacity = 1;
 }
 
+function usernameToLink(username) {
+  return ('<a target="_blank" href="https://github.com/' + username + '">' + username + '</a>');
+}
+
 var FollowersGraph = function() {
   var width = window.innerWidth,
   height = window.innerHeight;
@@ -15,13 +19,12 @@ var FollowersGraph = function() {
   this.color = d3.scale.category20();
 
   this.force = d3.layout.force()
-    .charge(-300)
-    .linkDistance(32)
-    // .linkStrength(0.1)
+    .charge(-500)
+    .linkDistance(50)
     .gravity(0.5)
     .size([width, height]);
 
-  this.svg = d3.select('body').append('svg')
+  this.svg = d3.select('body').insert('svg', ':first-child')
     .attr('width', width)
     .attr('height', height);
 
@@ -77,20 +80,18 @@ FollowersGraph.prototype.render = function () {
 
   this.link
     .enter().insert('line', ':first-child')
-    .attr('stroke-width', function(d) { return 1; })
-    .attr('stroke', '#000')
-    .attr('opacity', 0.3);
-
+    .attr('class', 'edge');
 
   this.node = this.node.data(this.usersData);
 
   this.node
     .enter().append('image')
       .attr('xlink:href', function(d) { return d.avatar_url; })
-      .attr('x', -32*0.5)
-      .attr('y', -32*0.5)
+      .attr('class', 'node')
       .attr('width', 32)
       .attr('height', 32)
+      .attr('x', -32*0.5)
+      .attr('y', -32*0.5)
       .on('click', this._onNodeClickBound);
 
   this.node.call(this.force.drag);
@@ -125,10 +126,11 @@ FollowersGraph.prototype._addFollowerLink = function(targetUser, sourceUser) {
 };
 
 FollowersGraph.prototype.addUserByUsername = function(username) {
+  toast('Fetching followers for ' + usernameToLink(username) + '...', 'progress');
   d3.json('api/users/' + username + '/followers', function(error, result) {
     if (error) return console.warn(error);
 
-    toast('Fetched followers for ' + username, 'success');
+    toast('Fetched followers for ' + usernameToLink(username), 'success');
 
     result.followers.forEach(function(follower) {
       this._addFollowerLink(result.user, follower);

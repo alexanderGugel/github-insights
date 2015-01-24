@@ -52,6 +52,12 @@ svg {
   color: #fff;
   border-radius: 2px;
   transition: all 500ms;
+  
+  a {
+    color: #fff;
+    font-weight: 600;
+    text-decoration: none;
+  }
 }
 
 @media (min-width: 500px) {
@@ -61,20 +67,16 @@ svg {
   }
 }
 
-#toast.success {
-  background: #4CAF50;
-}
-
-#toast.error {
-  background: #F44336;
-}
+#toast.success { background: #4CAF50; }
+#toast.error { background: #F44336; }
+#toast.progress { background: #03A9F4; }
 
 .node {
   cursor: pointer;
 }
 
-.link {
-  stroke: #999;
-  // stroke-opacity: .2;
-  opacity: 0.5;
+.edge {
+  stroke-width: 1;
+  stroke: #000;
+  opacity: 0.3;
 }

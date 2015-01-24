@@ -48,6 +48,11 @@ svg {
   border-radius: 2px;
   transition: all 500ms;
 }
+#toast a {
+  color: #fff;
+  font-weight: 600;
+  text-decoration: none;
+}
 @media (min-width: 500px) {
   #toast {
     margin: 5px;
@@ -60,10 +65,14 @@ svg {
 #toast.error {
   background: #f44336;
 }
+#toast.progress {
+  background: #03a9f4;
+}
 .node {
   cursor: pointer;
 }
-.link {
-  stroke: #999;
-  opacity: 0.5;
+.edge {
+  stroke-width: 1;
+  stroke: #000;
+  opacity: 0.3;
 }
