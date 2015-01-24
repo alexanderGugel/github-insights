@@ -1,6 +1,11 @@
 'use strict';
 
+
+/* jshint undef: true, unused: true */
+/* global d3 */
+
 var $toast = document.getElementById('toast');
+var $reset = document.getElementById('reset');
 
 function toast(html, type) {
   $toast.innerHTML = html;
@@ -12,11 +17,14 @@ function usernameToLink(username) {
   return ('<a target="_blank" href="https://github.com/' + username + '">' + username + '</a>');
 }
 
+$reset.addEventListener('click', reset);
+
 var force, svg, edge, node;
-var usersData = [];
-var followerLinksData = [];
-var _map = {};
+var usersData;
+var followerLinksData;
+var _map;
 var zoom;
+var _addedByUsername;
 
 function init() {
   force = d3.layout.force()
@@ -39,6 +47,16 @@ function init() {
   node = svg.selectAll('.node');
 
   force.on('tick', tick);
+
+  reset();
+}
+
+function reset() {
+  usersData = [];
+  followerLinksData = [];
+  _map = {};
+  _addedByUsername = {};
+  render();
 }
 
 function tick() {
@@ -62,7 +80,9 @@ function render() {
 
   edge
     .enter().insert('line', ':first-child')
-    .attr('class', 'edge');
+      .attr('class', 'edge');
+  edge
+    .exit().remove();
 
   node = node.data(usersData);
 
@@ -74,11 +94,11 @@ function render() {
       .attr('height', 32)
       .attr('x', -32*0.5)
       .attr('y', -32*0.5)
-      .on('click', _onNodeClick);
+      .on('click', _onNodeClick)
+  node
+    .exit().remove();
 
   node.call(force.drag);
-  node.append('title')
-    .text(function(d) { return d.login; });
 }
 
 function onZoom() {
@@ -107,6 +127,8 @@ function _addFollowerLink(targetUser, sourceUser) {
 }
 
 function addUserByUsername(username) {
+  if (_addedByUsername[username]) return;
+  _addedByUsername[username] = true;
   toast('Fetching followers for ' + usernameToLink(username) + '...', 'progress');
   d3.json('api/users/' + username + '/followers', function(error, result) {
     if (error) {

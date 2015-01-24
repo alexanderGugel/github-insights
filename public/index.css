@@ -27,6 +27,20 @@ nav {
   border: 2px solid #999;
   display: none;
 }
+#reset {
+  position: absolute;
+  top: 0;
+  right: 0;
+  vertical-align: top;
+  line-height: 1;
+  font-size: 3em;
+  padding: 0.25em 0.25em 0 0;
+  cursor: pointer;
+  opacity: 0.5;
+}
+#reset:hover {
+  opacity: 1;
+}
 svg {
   position: absolute;
   top: 0;
