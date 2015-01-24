@@ -1,30 +1,9 @@
 'use strict';
 
-var fs = require('fs');
-var mat4 = require('gl-matrix').mat4;
-
-var fragmentShaderSource = fs.readFileSync(__dirname + '/fragment-shader.glsl', 'utf8');
-var vertexShaderSource = fs.readFileSync(__dirname + '/vertex-shader.glsl', 'utf8');
-
-
-function makeShader(source, type) {
-    var shader = gl.createShader(type);
-    gl.shaderSource(shader, source);
-    gl.compileShader(shader);
-    if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
-        console.error(gl.getShaderInfoLog(shader));
-        return null;
-    }
-    return shader;
-}
-
 var canvas, gl;
 function initGL() {
     canvas = document.createElement('canvas');
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
-    document.body.appendChild(canvas);
-    gl = canvas.getContext('experimental-webgl');
+    gl = canvas.getContext('2d');
     gl.viewportWidth = canvas.width;
     gl.viewportHeight = canvas.height;
 }
