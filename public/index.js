@@ -49,10 +49,10 @@ function init() {
   drag = d3.behavior.drag();
 
   force = d3.layout.force()
-    .charge(-400)
-    .linkDistance(400)
-    .linkStrength(0.1)
-    .chargeDistance(400)
+    .charge(-500)
+    .linkDistance(150)
+    .linkStrength(0.5)
+    .chargeDistance(150)
     // .gravity(0.5)
     .size([WIDTH, HEIGHT])
     .on('tick', tick);
