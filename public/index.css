@@ -65,18 +65,21 @@ nav form button {
   bottom: 1em;
   left: 1em;
   max-width: 100%;
-  width: 500px;
   background: #fff;
   border-radius: 2px;
+  display: inline-block;
 }
 #user-overlay h1.login {
+  display: inline-block;
   padding: 0.5em;
-  border-bottom: 1px solid #eee;
-  margin-top: 0;
+  margin: 0;
 }
 #user-overlay h1.login a {
   color: #000;
   text-decoration: none;
+}
+#user-overlay p {
+  margin: 0;
 }
 canvas {
   background: #efefef;
