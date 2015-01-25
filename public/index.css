@@ -68,6 +68,7 @@ nav form button {
   background: #fff;
   border-radius: 2px;
   display: inline-block;
+  opacity: 0;
 }
 #user-overlay h1.login {
   display: inline-block;

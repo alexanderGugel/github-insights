@@ -22,6 +22,7 @@ function usernameToLink(username) {
 }
 
 function displayUser(user) {
+  $userOverlay.style.opacity = 1;
   $userOverlay.querySelector('.login').innerHTML = '<a target="_blank" href="https://github.com/' + user.login + '">@' + user.login + '</a>'; 
 }
 
