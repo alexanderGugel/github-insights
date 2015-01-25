@@ -22,7 +22,7 @@ function usernameToLink(username) {
 }
 
 function displayUser(user) {
-  $userOverlay.querySelector('.login').innerHTML = '<a target="_blank" href="https://github.com/' + user.login + '">@' + user.login + '</a>';
+  $userOverlay.querySelector('.login').innerHTML = '<a target="_blank" href="https://github.com/' + user.login + '">@' + user.login + '</a>'; 
 }
 
 $reset.addEventListener('click', function(event) {
@@ -51,9 +51,9 @@ function init() {
   force = d3.layout.force()
     .charge(-200)
     .linkDistance(150)
-    .linkStrength(0.5)
+    // .linkStrength(0.5)
     .chargeDistance(150)
-    .alpha(0.5)
+    .alpha(0.8)
     // .gravity(0.5)
     .size([WIDTH, HEIGHT])
     .on('tick', tick);

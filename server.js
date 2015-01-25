@@ -16,10 +16,6 @@ server.get('/api/users/:username/following', function(req, res) {
     });
 });
 
-server.get('/api/repos/:repo', function() {
-
-});
-
 
 server.listen(process.env.PORT || 3141);
 
@@ -87,15 +83,10 @@ var following = function(username, callback) {
     });
 };
 
-var stargazers = function(owner, repo, callback) {
-    githubPaginate('https://api.github.com/repos/' + owner + '/' + repo + '/stargazers?per_page=100&page=0', callback);
-};
-
 var githubPaginate = function(url, callback, _bodies) {
     _bodies = _bodies || {};
     github(url, function (error, response, body) {
         if (!error || response.statusCode === 200) {
-            // TODO refactor
             if (!response.headers.link) {
                 return callback(null, [body]);
             }
@@ -111,31 +102,3 @@ var githubPaginate = function(url, callback, _bodies) {
         }
     });
 };
-
-// following('alexanderGugel', function(error, following) {
-//     console.log(following);
-// });
-
-// stargazers('Famous', 'famous', function(error, stargazers) {
-//     console.log(stargazers);
-// });
-
-
-
-
-// var stargazers = function (owner, repo, page, callback) {
-//     github('repos/' + owner + '/' + repo + '/stargazers?page=' + page, function (error, response, body) {
-//         if (!error || response.statusCode === 200) {
-//             callback(null, body);
-//         } else {
-//             callback(new Error('Couldn\'t access repo'));
-//         }
-//     });
-// };
-
-
-
-
-// stargazers('Famous', 'famous', 1, function(error, data) {
-//     console.log(error, data);
-// });
