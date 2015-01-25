@@ -8,6 +8,7 @@ var $reset = document.getElementById('reset');
 var $form = document.querySelector('nav form');
 var $username = $form.querySelector('input');
 var $userOverlay = document.getElementById('user-overlay');
+var _ = require('lodash');
 
 var NODE_SIZE = 32;
 
@@ -210,14 +211,18 @@ function _addUser(user) {
 function addUserByUsername(username) {
   if (_addedByUsername[username]) return;
   _addedByUsername[username] = true;
+
   toast('Fetching following for ' + usernameToLink(username) + '...', 'progress');
-  d3.json('api/users/' + username + '/following', function(error, result) {
-    if (error) {
-      return toast('Could not fetch following for ' + usernameToLink(username), 'error');
-    }
+
+  var _following, _user;
+
+  var done = _.after(2, function() {
+    // if (error) {
+    //   return toast('Could not fetch following for ' + usernameToLink(username), 'error');
+    // }
     toast('Fetched following for ' + usernameToLink(username), 'success');
-    var user = _addUser(result.user);
-    result.following.forEach(function(following) {
+    var user = _addUser(_user);
+    _following.forEach(function(following) {
       following = _addUser(following);
       var edge = { source: user, target: following };
       followerLinksData.push(edge);
@@ -225,6 +230,16 @@ function addUserByUsername(username) {
       following.edges.push(edge);
     });
     reapplyForce();
+  });
+
+  d3.json('api/users/' + username + '/following', function(error, __following) {
+    _following = __following;
+    done();
+  });
+
+  d3.json('api/users/' + username, function(error, __user) {
+    _user = __user;
+    done();
   });
 }
 
