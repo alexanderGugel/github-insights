@@ -5,6 +5,10 @@ var server = express();
 
 server.use(express.static(__dirname + '/public'));
 
+if (!process.env.PERSONAL_ACCESS_TOKEN) {
+    throw new Error('Missing PERSONAL_ACCESS_TOKEN env var');
+}
+
 server.use(function(req, res, next) {
   res.header('Access-Control-Allow-Origin', '*');
   res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
@@ -49,7 +53,7 @@ var github = function (url, callback) {
                     'Accept': 'application/vnd.github.v3.star+json'
                 },
                 auth: {
-                    user: process.env.PERSONAL_ACCESS_TOKEN || 'b330b9717358384e84f4e5d2bc7394d241738e0e'
+                    user: process.env.PERSONAL_ACCESS_TOKEN
                 }
             }, function(error, response, body) {
                 body = JSON.parse(body);
