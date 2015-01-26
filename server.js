@@ -5,6 +5,12 @@ var server = express();
 
 server.use(express.static(__dirname + '/public'));
 
+server.use(function(req, res, next) {
+  res.header('Access-Control-Allow-Origin', '*');
+  res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
+  next();
+});
+
 server.get('/api/users/:username/following', function(req, res) {
     var username = req.params.username;
     var page = req.query.page || 0;

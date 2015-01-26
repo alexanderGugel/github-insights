@@ -5,26 +5,21 @@
   "main": "index.js",
   "scripts": {
     "watch": "watchify -v -d public/index.js -o public/bundle.js & stylus -w public/index.styl & nodemon server.js",
+    "postinstall": "browserify -v -d public/index.js -o public/bundle.js && stylus public/index.styl",
+    "start": "node server",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "brfs": "^1.2.0",
-    "browserify": "^8.1.1",
-    "st": "^0.5.2",
-    "stylus": "^0.49.3",
     "watchify": "^2.2.1"
   },
   "dependencies": {
-    "gl-matrix": "^2.1.0",
+    "browserify": "^8.1.1",
+    "express": "^4.11.1",
     "lodash": "^2.4.1",
     "redis": "^0.12.1",
-    "request": "^2.51.0"
-  },
-  "browserify": {
-    "transform": [
-      "brfs"
-    ]
+    "request": "^2.51.0",
+    "stylus": "^0.49.3"
   }
 }

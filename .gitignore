@@ -33,3 +33,7 @@ node_modules
 npm-debug.log
 
 dump.rdb
+
+# Bundled files
+public/index.css
+public/bundle.js
