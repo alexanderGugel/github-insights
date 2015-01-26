@@ -247,4 +247,4 @@ function addUserByUsername(username) {
 
 
 init();
-addUserByUsername('FarhadG');
+addUserByUsername('alexanderGugel');
