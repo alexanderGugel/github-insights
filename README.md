@@ -8,7 +8,7 @@ What is this?
 
 An interactive graph of all the people you (or anyone else) is following.
 
-![Demo](https://raw.github.com/alexanderGugel/github-insights/master/demo.gif)
+![Demo](https://raw.githubusercontent.com/alexanderGugel/github-insights/master/demo.gif)
 
 How does this work?
 -------------------
