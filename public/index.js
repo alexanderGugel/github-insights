@@ -212,15 +212,15 @@ function addUserByUsername(username) {
   if (_addedByUsername[username]) return;
   _addedByUsername[username] = true;
 
-  toast('Fetching following for ' + usernameToLink(username) + '...', 'progress');
+  toast('Fetching followers for ' + usernameToLink(username) + '...', 'progress');
 
   var _following, _user;
 
   var done = _.after(2, function() {
     if (!_user) {
-      return toast('Could not fetch following for ' + usernameToLink(username), 'error');
+      return toast('Could not fetch followers for ' + usernameToLink(username), 'error');
     }
-    toast('Fetched following for ' + usernameToLink(username), 'success');
+    toast('Fetched followers for ' + usernameToLink(username), 'success');
     var user = _addUser(_user);
     _following.forEach(function(following) {
       following = _addUser(following);
