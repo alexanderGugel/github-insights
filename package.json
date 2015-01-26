@@ -17,8 +17,8 @@
   "dependencies": {
     "browserify": "^8.1.1",
     "express": "^4.11.1",
+    "level": "^0.18.0",
     "lodash": "^2.4.1",
-    "redis": "^0.12.1",
     "request": "^2.51.0",
     "stylus": "^0.49.3"
   }

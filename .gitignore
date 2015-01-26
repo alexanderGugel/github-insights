@@ -32,7 +32,7 @@ node_modules
 # Debug log from npm
 npm-debug.log
 
-dump.rdb
+db
 
 # Bundled files
 public/index.css

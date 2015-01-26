@@ -1,7 +1,9 @@
 var express = require('express');
 var request = require('request');
-var redis = require('./redis');
+var level = require('level');
 var server = express();
+var db = level('./db');
+
 
 server.use(express.static(__dirname + '/public'));
 
@@ -41,8 +43,8 @@ server.get('/api/users/:username', function(req, res) {
 server.listen(process.env.PORT || 3141);
 
 var github = function (url, callback) {
-    redis.get('github:' + url, function (error, data) {
-        if (data) {
+    db.get('github:' + url, function (error, data) {
+        if (!error) {
             data = JSON.parse(data);
             callback(data.error, data.response, data.body);
         } else {
@@ -57,12 +59,11 @@ var github = function (url, callback) {
                 }
             }, function(error, response, body) {
                 body = JSON.parse(body);
-                redis.set('github:' + url, JSON.stringify({
+                db.put('github:' + url, JSON.stringify({
                     error: error,
                     response: response,
                     body: body
                 }));
-                redis.expire('github:' + url, 60*60*24*14); // cache for 2 weeks
                 callback(error, response, body);
             });
         }
