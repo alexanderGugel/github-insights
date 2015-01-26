@@ -217,9 +217,9 @@ function addUserByUsername(username) {
   var _following, _user;
 
   var done = _.after(2, function() {
-    // if (error) {
-    //   return toast('Could not fetch following for ' + usernameToLink(username), 'error');
-    // }
+    if (!_user) {
+      return toast('Could not fetch following for ' + usernameToLink(username), 'error');
+    }
     toast('Fetched following for ' + usernameToLink(username), 'success');
     var user = _addUser(_user);
     _following.forEach(function(following) {
